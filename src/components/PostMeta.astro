@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import avatar from '../assets/home/aguia-vermelha.png';
+import { site } from '../config/site';
+import { formatPostDate } from '../lib/blog';
+
+interface Props {
+  date: Date;
+  readingTime: number;
+  class?: string;
+}
+
+const { date, readingTime, class: className } = Astro.props;
+---
+
+<div class:list={['flex items-center gap-3 text-xs text-brand', className]}>
+  <Image src={avatar} alt="" width={64} height={64} class="size-8 rounded-full object-contain" />
+  <div>
+    <p class="font-medium">{site.name}</p>
+    <p class="text-brand/80">
+      <time datetime={date.toISOString()}>{formatPostDate(date)}</time>
+      <span aria-hidden="true"> · </span>
+      {readingTime} min de leitura
+    </p>
+  </div>
+</div>

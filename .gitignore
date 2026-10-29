@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.DS_Store
+npm-debug.log*
+
+# README fica só local, não vai para o GitHub
+/README.md
+
+# Arquivos locais (IA, pesquisa, editor): não vão para o GitHub
+/CLAUDE.md
+/AGENTS.md
+.claude/
+.agents/
+/docs/
+.vscode/

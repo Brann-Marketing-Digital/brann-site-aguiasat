@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { site } from '../config/site';
+import { stripBase, withBase } from '../utils/url';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Classes extras no <main> (ex.: fundo da página). */
+  mainClass?: string;
+  /** Imagem de compartilhamento (URL absoluta ou caminho em /public). */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = site.description,
+  mainClass,
+  ogImage,
+  ogType = 'website',
+} = Astro.props;
+
+const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
+const canonical = new URL(stripBase(Astro.url.pathname), site.url);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase('/favicon.png')} type="image/png" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="pt_BR" />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, site.url)} />}
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2"
+    >
+      Ir para o conteúdo principal
+    </a>
+    <Header />
+    <main id="conteudo" class:list={['flex-1', mainClass]}>
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFloat />
+    <script>
+      import '../scripts/reveal.ts';
+    </script>
+  </body>
+</html>

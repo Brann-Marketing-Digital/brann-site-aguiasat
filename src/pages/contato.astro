@@ -1,0 +1,213 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import mapa from '../assets/home/mapa-contato.png';
+import Button from '../components/Button.astro';
+import { site, whatsappLink } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const fieldClass =
+  'mt-1 block w-full border-0 border-b border-black bg-transparent px-0 py-2 text-base text-black focus:ring-0 focus:outline-none focus-visible:border-brand';
+const labelClass = 'block text-xs text-black';
+---
+
+<BaseLayout
+  title="Contato"
+  description="Fale com a ÁguiaSat: endereço, telefones, e-mail e formulário de contato."
+>
+  <div class="relative overflow-hidden bg-linear-to-b from-brand-dark to-brand pt-14 pb-24 text-white md:min-h-[1535px]">
+    <Image
+      src={mapa}
+      alt=""
+      width={460}
+      class="pointer-events-none absolute top-[380px] -left-[260px] hidden h-auto w-[460px] md:block"
+    />
+    <Image
+      src={mapa}
+      alt=""
+      width={600}
+      class="pointer-events-none absolute top-[40px] -right-[180px] hidden h-auto w-[600px] rotate-[8deg] md:block"
+    />
+
+    <div class="relative mx-auto max-w-[940px] px-gutter">
+      <h1 class="text-center text-5xl font-bold tracking-tight underline underline-offset-4 md:text-[56px]">
+        Contato
+      </h1>
+
+      <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+        <section aria-labelledby="endereco-titulo">
+          <h2 id="endereco-titulo" class="text-[26px] font-bold tracking-tight">
+            Endereço
+          </h2>
+          <address class="mt-8 text-base/[30px] font-light not-italic">
+            {site.contact.address}
+          </address>
+        </section>
+
+        <section aria-labelledby="contato-titulo">
+          <h2 id="contato-titulo" class="text-[26px] font-bold tracking-tight">
+            Contato
+          </h2>
+          <p class="mt-8 text-base/[24px] font-light">
+            <strong class="font-bold">{site.contact.hoursNote}</strong>
+            <br />
+            <a href={site.contact.phoneHref} class="hover:underline">
+              {site.contact.phone}
+            </a>
+          </p>
+          <ul class="mt-4 flex gap-3">
+            {site.socials.map((social) => (
+              <li>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  class="grid size-[22px] place-items-center rounded-full bg-black text-white hover:opacity-70"
+                >
+                  <Icon name={social.icon} class="size-3" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section aria-labelledby="atendimento-titulo">
+          <h2 id="atendimento-titulo" class="text-[26px] font-bold tracking-tight">
+            Atendimento
+          </h2>
+          <p class="mt-8 text-base/[20px] font-light">
+            Suporte
+            <br />
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:underline"
+            >
+              {site.contact.whatsappDisplay}
+            </a>
+          </p>
+          <p class="mt-5 text-base font-light">
+            <a href={`mailto:${site.contact.email}`} class="break-words hover:underline">
+              {site.contact.email}
+            </a>
+          </p>
+          <p class="mt-6 text-base font-light">{site.contact.hours}</p>
+        </section>
+      </div>
+
+      <form
+        id="contact-form"
+        class="mx-auto mt-20 max-w-[699px] bg-white px-6 pt-6 pb-6 text-black md:mt-[80px]"
+        novalidate
+      >
+        <h2 class="text-[28px]/[1.2] font-light tracking-tight">
+          Preencha seus dados para mais informações
+        </h2>
+
+        <div class="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+          <div>
+            <label for="nome" class={labelClass}>
+              Nome *
+            </label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              autocomplete="given-name"
+              required
+              class={fieldClass}
+            />
+          </div>
+          <div>
+            <label for="sobrenome" class={labelClass}>
+              Sobrenome
+            </label>
+            <input
+              id="sobrenome"
+              name="sobrenome"
+              type="text"
+              autocomplete="family-name"
+              class={fieldClass}
+            />
+          </div>
+          <div class="sm:col-span-2">
+            <label for="email" class={labelClass}>
+              Email *
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              class={fieldClass}
+            />
+          </div>
+          <div class="sm:col-span-2">
+            <label for="mensagem" class={labelClass}>
+              Mensagem
+            </label>
+            <textarea
+              id="mensagem"
+              name="mensagem"
+              rows="3"
+              class:list={[fieldClass, 'h-24 resize-none']}
+            ></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label for="telefone" class={labelClass}>
+              Telefone
+            </label>
+            <input id="telefone" name="telefone" type="tel" autocomplete="tel" class={fieldClass} />
+          </div>
+        </div>
+
+        <p class="mt-4 hidden text-sm text-brand" role="alert" data-form-error></p>
+        <p class="mt-4 text-xs text-neutral-600">
+          Ao enviar, o WhatsApp da {site.name} abre com os seus dados preenchidos para você
+          confirmar o envio.
+        </p>
+        <Button
+          type="submit"
+          class="mt-4 !bg-black !px-14 !py-2.5 !text-base !tracking-normal !normal-case"
+        >
+          Enviar
+        </Button>
+      </form>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { site, whatsappLink } from '../config/site';
+
+  const form = document.querySelector<HTMLFormElement>('#contact-form');
+  const error = form?.querySelector<HTMLElement>('[data-form-error]');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const value = (name: string) => String(data.get(name) ?? '').trim();
+
+    if (!value('nome') || !/^\S+@\S+\.\S+$/.test(value('email'))) {
+      if (error) {
+        error.textContent = 'Informe seu nome e um e-mail válido.';
+        error.classList.remove('hidden');
+      }
+      return;
+    }
+    error?.classList.add('hidden');
+
+    const lines = [
+      `Olá, ${site.name}! Gostaria de mais informações.`,
+      `Nome: ${[value('nome'), value('sobrenome')].filter(Boolean).join(' ')}`,
+      `Email: ${value('email')}`,
+      value('telefone') && `Telefone: ${value('telefone')}`,
+      value('mensagem') && `Mensagem: ${value('mensagem')}`,
+    ].filter(Boolean);
+
+    window.open(whatsappLink(lines.join('\n')), '_blank', 'noopener');
+  });
+</script>

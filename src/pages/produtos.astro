@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import Button from '../components/Button.astro';
+import { products } from '../config/catalog';
+import { whatsappLink } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// A página de produtos detalha apenas os produtos com descrição.
+const detailed = products.filter((product) => product.description);
+---
+
+<BaseLayout
+  title="Produtos"
+  description="Rastreador, bloqueador, anti jammer, sensor de plataforma e identificador de motoristas."
+>
+  <div class="bg-linear-to-b from-brand-darker to-[#a3262c] pt-16 pb-20 text-white md:pt-[60px]">
+    <div class="mx-auto max-w-[1100px] px-gutter">
+      <h1 class="text-center text-5xl font-bold tracking-tight md:text-[60px]">Produtos</h1>
+      <ul class="mt-6 flex flex-wrap justify-center gap-y-12">
+        {detailed.map((product) => (
+          <li class="flex w-full flex-col items-center text-center sm:w-1/2 lg:w-[341px]">
+            <Image
+              src={product.icon}
+              alt={product.iconAlt}
+              width={394}
+              height={394}
+              widths={[197, 394]}
+              sizes="197px"
+              class="size-[197px] object-contain"
+            />
+            <h2 class="text-[21px] leading-[1.3] font-bold tracking-tight">{product.name}</h2>
+            <p class="mt-6 max-w-[226px] text-justify text-[13px]/[18px] font-light">
+              {product.description}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  <div class="bg-black py-7 text-center">
+    <Button
+      data-reveal="rubber"
+      href={whatsappLink('Olá! Gostaria de conhecer mais sobre os produtos de rastreamento.')}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Tenho interesse
+    </Button>
+  </div>
+</BaseLayout>

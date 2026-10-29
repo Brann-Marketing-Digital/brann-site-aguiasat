@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/montserrat';
+@import '@fontsource-variable/syne';
+
+/* Tokens do tema (Tailwind v4): geram utilitários como bg-brand, font-display, etc. */
+@theme {
+  --color-brand: #c83238;
+  --color-brand-dark: #8b0000;
+  --color-brand-darker: #6b0000;
+  --color-brand-deep: #bf0a10;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #333333;
+  --color-paper: #ffffff;
+
+  --font-sans: 'Montserrat Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Syne Variable', 'Montserrat Variable', ui-sans-serif, sans-serif;
+
+  --spacing-gutter: 1.25rem;
+  --spacing-section: 4rem;
+
+  --container-page: 72rem;
+  --container-prose: 46rem;
+
+  --breakpoint-3xl: 120rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Texto corrido dos posts do blog (Markdown renderizado pelo Astro). */
+  .prose-post {
+    @apply mx-auto max-w-prose text-base/8 text-ink-soft;
+  }
+  .prose-post h2 {
+    @apply mt-10 mb-3 font-display text-2xl font-bold tracking-tight text-brand;
+  }
+  .prose-post h3 {
+    @apply mt-8 mb-2 font-display text-xl font-bold tracking-tight text-brand;
+  }
+  .prose-post p {
+    @apply my-4;
+  }
+  .prose-post ul {
+    @apply my-4 list-disc space-y-1 pl-6 marker:text-brand;
+  }
+  .prose-post a {
+    @apply text-brand underline underline-offset-2;
+  }
+  .prose-post img {
+    @apply my-6 h-auto w-full rounded-lg;
+  }
+}
+
+/*
+ * Animações de entrada.
+ * Os elementos com data-reveal começam pausados no primeiro quadro e rodam quando entram na
+ * tela (ver src/scripts/reveal.ts, carregado pelo BaseLayout). A classe .js é adicionada no
+ * <head>, então sem JavaScript o conteúdo aparece normalmente.
+ */
+@keyframes motion-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dobra para frente, como uma aba que abre pelo topo. */
+@keyframes motion-fold-in {
+  from {
+    transform: translateY(-50%) perspective(800px) rotateX(-90deg) translateY(50%);
+  }
+  to {
+    transform: translateY(-50%) perspective(800px) rotateX(0deg) translateY(50%);
+  }
+}
+
+@keyframes motion-blur-in {
+  from {
+    filter: blur(6px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+/* Balanço elástico no primeiro terço do ciclo; no resto o botão fica parado. */
+@keyframes motion-rubber {
+  14.85% {
+    transform: scale(1.03, 0.93);
+  }
+  18.48% {
+    transform: scale(0.9, 1.03);
+  }
+  21.78% {
+    transform: scale(1.02, 0.96);
+  }
+  25.74% {
+    transform: scale(0.98, 1.02);
+  }
+  29.37% {
+    transform: scale(1.005, 0.9995);
+  }
+  33% {
+    transform: scale(1, 1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    animation-play-state: paused;
+    animation-fill-mode: backwards;
+    animation-delay: 1ms;
+  }
+  .js [data-reveal][data-revealed] {
+    animation-play-state: running;
+  }
+
+  .js [data-reveal='fade'] {
+    animation-name: motion-fade-in;
+    animation-duration: 1200ms;
+    animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  .js [data-reveal='fold'] {
+    animation-name: motion-fade-in, motion-fold-in;
+    animation-duration: 1200ms, 1200ms;
+    animation-timing-function:
+      cubic-bezier(0.25, 0.46, 0.45, 0.94), cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .js [data-reveal='blur'] {
+    animation-name: motion-fade-in, motion-blur-in;
+    animation-duration: 1400ms, 2000ms;
+    animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715), linear;
+  }
+  .js [data-reveal='rubber'] {
+    animation-name: motion-rubber;
+    animation-duration: 3000ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: none;
+  }
+}

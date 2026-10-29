@@ -1,0 +1,189 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import googleG from '../assets/reviews/google-g.svg';
+import googleLogo from '../assets/reviews/google-logo.svg';
+import { googleReviews } from '../config/reviews';
+import { isLongReview, timeAgo } from '../lib/reviews';
+
+const avatars = import.meta.glob<{ default: ImageMetadata }>('../assets/reviews/avatar-*.png', {
+  eager: true,
+});
+const avatarFor = (file: string) => avatars[`../assets/reviews/${file}`]?.default;
+
+const { rating, count, items } = googleReviews;
+const ratingLabel = rating.toLocaleString('pt-BR');
+const filledStars = Math.round(rating);
+const stars = (filled: number) => Array.from({ length: 5 }, (_, i) => i < filled);
+
+// Caminhos do Material Design (preenchidos); os ícones do Lucide são só contorno.
+const starPath =
+  'M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z';
+const verifiedPath =
+  'M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z';
+---
+
+<section
+  class="font-[Times_New_Roman,Times,serif] text-black"
+  aria-label="Avaliações do Google"
+  data-reviews
+>
+  <div class="rounded-lg bg-[#f5f5f8] px-4 py-5 text-center">
+    <div class="flex items-center justify-center gap-2">
+      <Image src={googleLogo} alt="Google" height={32} class="h-8 w-auto" />
+      <span class="text-xl leading-none font-bold">Avaliações</span>
+    </div>
+    <div class="mt-2 flex items-center justify-center gap-2">
+      <span class="text-[22px] leading-none font-bold">{ratingLabel}</span>
+      <span class="flex" role="img" aria-label={`${ratingLabel} de 5 estrelas`}>
+        {stars(filledStars).map((on) => (
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            class:list={['size-[21px]', on ? 'text-[#fbbc04]' : 'text-[#b4b6bb]']}
+          >
+            <path fill="currentColor" d={starPath} />
+          </svg>
+        ))}
+      </span>
+      <span class="text-xs text-neutral-500">({count})</span>
+    </div>
+  </div>
+
+  <div class="relative mt-5">
+    <ul
+      class="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      data-reviews-track
+    >
+      {items.map((review) => {
+        const avatar = avatarFor(review.avatar);
+        const long = isLongReview(review.text);
+        return (
+          <li class="w-full shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
+            <article class="h-full min-h-[222px] rounded-lg bg-[#f5f5f8] p-6">
+              <header class="flex items-start gap-3">
+                <span class="relative shrink-0">
+                  {avatar && (
+                    <Image
+                      src={avatar}
+                      alt=""
+                      width={80}
+                      height={80}
+                      class="size-10 rounded-full object-cover"
+                    />
+                  )}
+                  <Image
+                    src={googleG}
+                    alt=""
+                    width={24}
+                    height={24}
+                    class="absolute -right-1.5 -bottom-1.5 size-[22px] rounded-full bg-white p-0.5 shadow-sm"
+                  />
+                </span>
+                <span class="min-w-0">
+                  <span class="flex items-center gap-1.5 text-[15px] leading-5 font-bold">
+                    <a
+                      href={review.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="truncate hover:underline"
+                    >
+                      {review.name}
+                    </a>
+                    <svg
+                      viewBox="0 0 24 24"
+                      role="img"
+                      aria-label="Avaliação verificada"
+                      class="size-4 shrink-0 text-[#2962ff]"
+                    >
+                      <path fill="currentColor" d={verifiedPath} />
+                    </svg>
+                  </span>
+                  <span class="mt-0.5 block text-xs text-neutral-500">
+                    {timeAgo(review.publishedAt)}
+                  </span>
+                </span>
+              </header>
+              <span class="mt-4 flex" role="img" aria-label={`${review.rating} de 5 estrelas`}>
+                {stars(review.rating).map((on) => (
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    class:list={['size-[19px]', on ? 'text-[#fbbc04]' : 'text-[#b4b6bb]']}
+                  >
+                    <path fill="currentColor" d={starPath} />
+                  </svg>
+                ))}
+              </span>
+              <p class:list={['mt-3 text-base/6', long && 'line-clamp-3']} data-review-text>
+                {review.text}
+              </p>
+              {long && (
+                <>
+                  <button
+                    type="button"
+                    class="mt-1 text-base text-[#2962ff] hover:underline"
+                    data-review-more
+                  >
+                    Leia mais
+                  </button>
+                </>
+              )}
+            </article>
+          </li>
+        );
+      })}
+    </ul>
+
+    <button
+      type="button"
+      class="absolute top-1/2 right-1 z-10 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-neutral-600/70 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-neutral-700/80 lg:-right-4"
+      aria-label="Próximas avaliações"
+      data-reviews-next
+    >
+      <Icon name="lucide:chevron-right" class="size-5" />
+    </button>
+    <button
+      type="button"
+      class="absolute top-1/2 left-1 z-10 hidden size-8 -translate-y-1/2 place-items-center rounded-full bg-neutral-600/70 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-neutral-700/80 lg:-left-4"
+      aria-label="Avaliações anteriores"
+      data-reviews-prev
+    >
+      <Icon name="lucide:chevron-left" class="size-5" />
+    </button>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-reviews]');
+  const track = root?.querySelector<HTMLElement>('[data-reviews-track]');
+  const next = root?.querySelector<HTMLButtonElement>('[data-reviews-next]');
+  const prev = root?.querySelector<HTMLButtonElement>('[data-reviews-prev]');
+
+  function step() {
+    const card = track?.querySelector('li');
+    return card ? card.getBoundingClientRect().width + 20 : 0;
+  }
+
+  function updateArrows() {
+    if (!track || !next || !prev) return;
+    const max = track.scrollWidth - track.clientWidth - 2;
+    next.classList.toggle('hidden', track.scrollLeft >= max);
+    next.classList.toggle('grid', track.scrollLeft < max);
+    prev.classList.toggle('hidden', track.scrollLeft <= 2);
+    prev.classList.toggle('grid', track.scrollLeft > 2);
+  }
+
+  next?.addEventListener('click', () => track?.scrollBy({ left: step() }));
+  prev?.addEventListener('click', () => track?.scrollBy({ left: -step() }));
+  track?.addEventListener('scroll', updateArrows, { passive: true });
+  window.addEventListener('resize', updateArrows);
+  updateArrows();
+
+  root?.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-review-more]');
+    if (!button) return;
+    button.parentElement?.querySelector('[data-review-text]')?.classList.remove('line-clamp-3');
+    button.remove();
+  });
+</script>

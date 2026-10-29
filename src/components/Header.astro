@@ -1,0 +1,119 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import logo from '../assets/logo-aguiasat.png';
+import { site } from '../config/site';
+import { stripBase, withBase } from '../utils/url';
+import Button from './Button.astro';
+
+interface Props {
+  /** Caminho da página atual, para destacar o item ativo do menu. */
+  currentPath?: string;
+}
+
+const { currentPath = stripBase(Astro.url.pathname) } = Astro.props;
+
+const normalize = (path: string) => (path.length > 1 ? path.replace(/\/$/, '') : path);
+const isActive = (href: string) => {
+  const current = normalize(currentPath);
+  const target = normalize(href);
+  return target === '/' ? current === '/' : current === target || current.startsWith(`${target}/`);
+};
+---
+
+<header class="sticky top-0 z-40 bg-white" data-site-header>
+  <div class="mx-auto flex h-[71px] w-full max-w-page items-center justify-between px-gutter">
+    <a href={withBase('/')} class="shrink-0" aria-label={`${site.name} — página inicial`}>
+      <Image
+        src={logo}
+        alt={`${site.name} — ${site.tagline}`}
+        width={400}
+        loading="eager"
+        class="h-auto w-[133px] lg:w-[200px]"
+      />
+    </a>
+
+    <nav aria-label="Principal" class="hidden md:block" data-reveal="fade">
+      <ul class="flex items-center gap-8">
+        {site.nav.map((item) => (
+          <li>
+            <a
+              href={withBase(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="text-[15px] text-brand transition-colors duration-[400ms] hover:text-ink-soft aria-[current=page]:text-black"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <Button href={site.cta.href} class="max-md:hidden" data-reveal="rubber">
+        {site.cta.label}
+      </Button>
+      <button
+        type="button"
+        class="grid size-11 place-items-center rounded-md text-brand md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menu"
+        data-menu-toggle
+      >
+        <Icon name="lucide:menu" class="size-6" data-icon-open />
+        <Icon name="lucide:x" class="hidden size-6" data-icon-close />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-brand/20 bg-white md:hidden" data-mobile-menu>
+    <nav aria-label="Principal (mobile)" class="mx-auto max-w-page px-gutter py-4">
+      <ul class="flex flex-col">
+        {site.nav.map((item) => (
+          <li>
+            <a
+              href={withBase(item.href)}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="block py-3 text-base text-brand aria-[current=page]:text-black"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <Button href={site.cta.href} class="mt-3 w-full text-sm">
+        {site.cta.label}
+      </Button>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+  const iconOpen = toggle?.querySelector('[data-icon-open]');
+  const iconClose = toggle?.querySelector('[data-icon-close]');
+
+  function setOpen(open: boolean) {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    menu.classList.toggle('hidden', !open);
+    iconOpen?.classList.toggle('hidden', open);
+    iconClose?.classList.toggle('hidden', !open);
+  }
+
+  toggle?.addEventListener('click', () => {
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+  menu?.addEventListener('click', (event) => {
+    if ((event.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  window.matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+    if (event.matches) setOpen(false);
+  });
+</script>

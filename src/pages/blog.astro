@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import PostMeta from '../components/PostMeta.astro';
+import { getSortedPosts } from '../lib/blog';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/url';
+
+const posts = await getSortedPosts();
+---
+
+<BaseLayout
+  title="Blog"
+  description="Notícias, dicas de segurança e conteúdos sobre rastreamento e monitoramento veicular."
+  mainClass="bg-white"
+>
+  <h1 class="sr-only">Blog</h1>
+  <div class="mx-auto max-w-[980px] bg-neutral-200 px-3 py-7 md:px-6">
+    <ul class="flex flex-col gap-6">
+      {posts.map((post) => (
+        <li>
+          <article class="group relative flex flex-col overflow-hidden bg-white md:h-[335px] md:flex-row">
+            {post.data.image && (
+              <Image
+                src={post.data.image}
+                alt={post.data.imageAlt}
+                width={900}
+                height={670}
+                widths={[450, 900]}
+                sizes="(min-width: 768px) 450px, 100vw"
+                class="h-56 w-full object-cover md:h-full md:w-[450px] md:shrink-0"
+              />
+            )}
+            <div class="flex min-w-0 flex-1 flex-col gap-4 p-6 md:p-8">
+              <PostMeta date={post.data.pubDate} readingTime={post.data.readingTime} />
+              <h2 class="line-clamp-4 font-display text-[22px]/[1.2] font-bold tracking-tight text-brand">
+                <a href={withBase(`/post/${post.id}/`)} class="after:absolute after:inset-0">
+                  {post.data.title}
+                </a>
+              </h2>
+              <p class="line-clamp-3 text-xs/[1.6] text-ink-soft">{post.data.description}</p>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>

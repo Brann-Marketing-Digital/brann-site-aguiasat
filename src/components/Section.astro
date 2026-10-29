@@ -1,0 +1,15 @@
+---
+interface Props {
+  class?: string;
+  id?: string;
+  /** Aplica o espaçamento vertical padrão das seções. */
+  padded?: boolean;
+  'aria-labelledby'?: string;
+}
+
+const { class: className, id, padded = true, 'aria-labelledby': labelledby } = Astro.props;
+---
+
+<section id={id} aria-labelledby={labelledby} class:list={[padded && 'py-section', className]}>
+  <slot />
+</section>

@@ -1,0 +1,242 @@
+---
+import { Image } from 'astro:assets';
+import aguia from '../assets/home/aguia-vermelha.png';
+import hero from '../assets/home/hero-rodovia.jpg';
+import homem from '../assets/home/homem-notebook.png';
+import rede from '../assets/home/rede-pontos.png';
+import Button from '../components/Button.astro';
+import Container from '../components/Container.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
+import { products, services } from '../config/catalog';
+import { site, whatsappLink } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/url';
+---
+
+<BaseLayout
+  title="Rastreamento Veicular em Todo o Brasil"
+  description={site.description}
+  mainClass="overflow-x-clip"
+>
+  <!-- Hero: vídeo em loop a 29% de opacidade sobre fundo branco -->
+  <section class="relative isolate flex min-h-64 items-center justify-center overflow-hidden bg-white md:h-[434px]">
+    <div class="absolute inset-0 -z-10 opacity-[0.29]" aria-hidden="true">
+      <Image
+        src={hero}
+        alt=""
+        widths={[640, 1080, 1440, 1920]}
+        sizes="100vw"
+        loading="eager"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <video
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        data-hero-video
+      >
+        <source src={withBase('/video/hero-360p.mp4')} type="video/mp4" media="(max-width: 767px)" />
+        <source src={withBase('/video/hero-720p.mp4')} type="video/mp4" />
+      </video>
+    </div>
+    <Image
+      src={aguia}
+      alt={`Logotipo da ${site.name}`}
+      width={304}
+      height={308}
+      loading="eager"
+      class="h-auto w-44 md:w-[304px]"
+    />
+  </section>
+
+  <!-- Empresa -->
+  <section
+    class="relative overflow-hidden bg-white py-12 md:py-0 md:h-[520px]"
+    aria-labelledby="empresa-titulo"
+  >
+    <Image
+      src={rede}
+      alt=""
+      width={560}
+      class="pointer-events-none absolute top-[-40px] left-[-300px] hidden h-auto w-[560px] md:block"
+    />
+    <Image
+      src={rede}
+      alt=""
+      width={560}
+      class="pointer-events-none absolute top-[-10px] right-[-330px] hidden h-auto w-[560px] -scale-x-100 rotate-[20deg] md:block"
+    />
+    <Container class="relative grid items-center gap-8 md:h-full md:max-w-[888px] md:grid-cols-[340px_424px] md:justify-center md:gap-16 md:pr-[60px]">
+      <div class="max-w-[340px]">
+        <h2
+          id="empresa-titulo"
+          data-reveal="fold"
+          class="text-3xl font-bold tracking-tight text-brand uppercase"
+        >
+          Empresa
+        </h2>
+        <div data-reveal="fold" class="mt-8 space-y-4 text-[13px]/[17px] text-ink-soft">
+          <p>
+            Na <strong>ÁguiaSat</strong>, nossa missão é cuidar do que é seu com segurança,
+            eficiência e tecnologia. Oferecemos soluções inteligentes de rastreamento e
+            monitoramento, desenvolvidas para proteger diferentes tipos de bens e garantir total
+            controle, onde quer que você esteja.
+          </p>
+          <p>
+            Com <strong>sede em Tubarão – SC</strong> e atuação em todo o território nacional,{' '}
+            <strong>
+              contamos com equipamentos modernos, plataforma intuitiva e pronta resposta 24h,
+              proporcionando tranquilidade e confiança para você, sua família ou sua empresa.
+            </strong>
+          </p>
+          <p>
+            Também atuamos na <strong>gestão de frotas e operações de transporte</strong>, ajudando
+            negócios a aumentar a produtividade e reduzir riscos operacionais.
+          </p>
+          <p>
+            Com uma <strong>equipe altamente qualificada e tecnologia em constante evolução</strong>
+            , a ÁguiaSat está sempre <strong>conectada à sua segurança.</strong>
+          </p>
+        </div>
+      </div>
+      <Image
+        src={homem}
+        alt="Homem sorrindo segurando um notebook"
+        width={424}
+        height={424}
+        class="mx-auto h-auto w-full max-w-[424px] self-end"
+      />
+    </Container>
+    <div class="absolute inset-x-0 bottom-0 mx-auto hidden h-px w-[850px] max-w-[90%] bg-ink-soft md:block"></div>
+  </section>
+
+  <!-- Serviços -->
+  <section
+    class="bg-linear-to-b from-brand-dark to-brand py-14 text-white md:pt-14 md:pb-10"
+    aria-labelledby="servicos-titulo"
+  >
+    <Container>
+      <h2
+        id="servicos-titulo"
+        data-reveal="blur"
+        class="text-center text-[34px] leading-tight font-bold tracking-tight"
+      >
+        Serviços
+      </h2>
+      <ul class="mx-auto mt-12 flex max-w-[920px] flex-wrap justify-center gap-x-0 gap-y-6">
+        {services.map((service) => (
+          <li
+            data-reveal="blur"
+            class="flex w-1/2 flex-col items-center px-2 text-center md:w-[215px]"
+          >
+            <Image
+              src={service.icon}
+              alt=""
+              width={service.iconContain ? 200 : 370}
+              height={service.iconContain ? 200 : 212}
+              class:list={
+                service.iconContain ? 'size-[100px] object-contain' : 'h-[106px] w-[185px]'
+              }
+            />
+            <p class="mt-2 text-base/[19px] font-light">
+              {service.homeLabel.order === 'regular-first' ? (
+                <>
+                  <span class="block">{service.homeLabel.regular}</span>
+                  <strong class="block font-bold">{service.homeLabel.strong}</strong>
+                </>
+              ) : (
+                <>
+                  <strong class="block font-bold">{service.homeLabel.strong}</strong>
+                  <span class="block">{service.homeLabel.regular}</span>
+                </>
+              )}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-10 text-center">
+        <Button href="/servicos/" variant="square">
+          Saiba mais
+        </Button>
+      </div>
+      <div class="mx-auto mt-14 hidden h-px w-[850px] max-w-full bg-white/50 md:block"></div>
+    </Container>
+  </section>
+
+  <!-- Pontos de apoio -->
+  <section class="bg-white py-8" aria-label="Abrangência">
+    <Container class="flex max-w-[760px] flex-col items-center gap-8 md:flex-row md:justify-center md:gap-14">
+      <Image src={rede} alt="" width={190} class="h-auto w-[150px] opacity-45 md:w-[190px]" />
+      <p class="max-w-[480px] text-center text-[28px]/[1.15] font-light text-brand md:text-left md:text-[32px]">
+        Somos mais de <strong class="font-bold">{site.stats.supportPoints} pontos de apoio</strong>{' '}
+        em todo o Brasil!
+      </p>
+    </Container>
+  </section>
+
+  <!-- Produtos -->
+  <section
+    class="bg-linear-to-b from-brand to-brand-dark py-14 text-white"
+    aria-labelledby="produtos-titulo"
+  >
+    <Container>
+      <h2
+        id="produtos-titulo"
+        data-reveal="blur"
+        class="text-center text-[34px] leading-tight font-bold tracking-tight"
+      >
+        Produtos
+      </h2>
+      <ul class="mx-auto mt-12 flex max-w-[920px] flex-wrap justify-center gap-y-6">
+        {products.map((product) => (
+          <li
+            data-reveal="blur"
+            class="flex w-1/2 flex-col items-center px-2 text-center md:w-[215px]"
+          >
+            <Image src={product.icon} alt="" width={370} height={212} class="h-[106px] w-[185px]" />
+            <p class="mt-2 text-base/[19px] font-light">
+              {product.homeLabel
+                ? product.homeLabel.map((line) => <span class="block">{line}</span>)
+                : product.name}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <div class="mt-10 text-center">
+        <Button href="/produtos/" variant="square">
+          Saiba mais
+        </Button>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Avaliações do Google + orçamento -->
+  <section class="bg-brand pt-6 pb-9" aria-label="Avaliações e orçamento">
+    <div class="mx-auto w-full max-w-[1000px] px-gutter">
+      <GoogleReviews />
+      <div class="mt-4 text-center">
+        <Button
+          href={whatsappLink('Olá! Gostaria de fazer um orçamento de rastreamento.')}
+          variant="white"
+          data-reveal="rubber"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Faça seu orçamento
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Respeita "reduzir movimento": mantém o vídeo parado no primeiro quadro (poster).
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  if (video && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    video.removeAttribute('autoplay');
+    video.pause();
+  }
+</script>

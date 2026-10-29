@@ -1,0 +1,27 @@
+---
+import { Icon } from 'astro-icon/components';
+import { site } from '../config/site';
+---
+
+<footer class="bg-white py-5 text-center">
+  <ul class="flex items-center justify-center gap-3">
+    {site.socials.map((social) => (
+      <li>
+        <a
+          href={social.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={social.name}
+          class="grid size-[22px] place-items-center rounded-full bg-black text-white transition-opacity hover:opacity-70"
+        >
+          <Icon name={social.icon} class="size-3" />
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="mt-4 text-base">
+    <a href={site.contact.phoneHref} class="hover:text-brand">
+      {site.contact.phone}
+    </a>
+  </p>
+</footer>
