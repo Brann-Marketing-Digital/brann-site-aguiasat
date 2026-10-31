@@ -47,6 +47,7 @@ const canonical = new URL(stripBase(Astro.url.pathname), site.url);
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="pt_BR" />
     {ogImage && <meta property="og:image" content={new URL(ogImage, site.url)} />}
+    <script is:inline defer src="https://backend-analitico-production.up.railway.app/analitico.js" data-site="3aa5e638-2ba8-44f1-ba42-148473be6222"></script>
   </head>
   <body class="flex min-h-dvh flex-col">
     <a
