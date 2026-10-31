@@ -6,11 +6,6 @@ import googleLogo from '../assets/reviews/google-logo.svg';
 import { googleReviews } from '../config/reviews';
 import { isLongReview, timeAgo } from '../lib/reviews';
 
-const avatars = import.meta.glob<{ default: ImageMetadata }>('../assets/reviews/avatar-*.png', {
-  eager: true,
-});
-const avatarFor = (file: string) => avatars[`../assets/reviews/${file}`]?.default;
-
 const { rating, count, items } = googleReviews;
 const ratingLabel = rating.toLocaleString('pt-BR');
 const filledStars = Math.round(rating);
@@ -56,22 +51,19 @@ const verifiedPath =
       data-reviews-track
     >
       {items.map((review) => {
-        const avatar = avatarFor(review.avatar);
         const long = isLongReview(review.text);
         return (
           <li class="w-full shrink-0 snap-start sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
             <article class="h-full min-h-[222px] rounded-lg bg-[#f5f5f8] p-6">
               <header class="flex items-start gap-3">
                 <span class="relative shrink-0">
-                  {avatar && (
-                    <Image
-                      src={avatar}
-                      alt=""
-                      width={80}
-                      height={80}
-                      class="size-10 rounded-full object-cover"
-                    />
-                  )}
+                  {/* Sem foto do avaliador (LGPD): só a inicial, como o Google faz para quem não tem foto. */}
+                  <span
+                    aria-hidden="true"
+                    class="grid size-10 place-items-center rounded-full bg-brand font-sans text-lg font-bold text-white"
+                  >
+                    {review.name.charAt(0)}
+                  </span>
                   <Image
                     src={googleG}
                     alt=""

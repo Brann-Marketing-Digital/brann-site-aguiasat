@@ -5,6 +5,7 @@ import mapa from '../assets/home/mapa-contato.png';
 import Button from '../components/Button.astro';
 import { site, whatsappLink } from '../config/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/url';
 
 const fieldClass =
   'mt-1 block w-full border-0 border-b border-black bg-transparent px-0 py-2 text-base text-black focus:ring-0 focus:outline-none focus-visible:border-brand';
@@ -134,16 +135,9 @@ const labelClass = 'block text-xs text-black';
           </div>
           <div class="sm:col-span-2">
             <label for="email" class={labelClass}>
-              Email *
+              Email
             </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class={fieldClass}
-            />
+            <input id="email" name="email" type="email" autocomplete="email" class={fieldClass} />
           </div>
           <div class="sm:col-span-2">
             <label for="mensagem" class={labelClass}>
@@ -167,7 +161,11 @@ const labelClass = 'block text-xs text-black';
         <p class="mt-4 hidden text-sm text-brand" role="alert" data-form-error></p>
         <p class="mt-4 text-xs text-neutral-600">
           Ao enviar, o WhatsApp da {site.name} abre com os seus dados preenchidos para você
-          confirmar o envio.
+          confirmar o envio. Usamos esses dados só para responder ao seu contato. Veja a nossa{' '}
+          <a href={withBase('/politica-de-privacidade/')} class="underline hover:text-brand">
+            Política de Privacidade
+          </a>
+          .
         </p>
         <Button
           type="submit"
@@ -191,9 +189,9 @@ const labelClass = 'block text-xs text-black';
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) ?? '').trim();
 
-    if (!value('nome') || !/^\S+@\S+\.\S+$/.test(value('email'))) {
+    if (!value('nome') || (value('email') && !/^\S+@\S+\.\S+$/.test(value('email')))) {
       if (error) {
-        error.textContent = 'Informe seu nome e um e-mail válido.';
+        error.textContent = 'Informe seu nome e, se preencher o e-mail, um e-mail válido.';
         error.classList.remove('hidden');
       }
       return;
@@ -203,7 +201,7 @@ const labelClass = 'block text-xs text-black';
     const lines = [
       `Olá, ${site.name}! Gostaria de mais informações.`,
       `Nome: ${[value('nome'), value('sobrenome')].filter(Boolean).join(' ')}`,
-      `Email: ${value('email')}`,
+      value('email') && `Email: ${value('email')}`,
       value('telefone') && `Telefone: ${value('telefone')}`,
       value('mensagem') && `Mensagem: ${value('mensagem')}`,
     ].filter(Boolean);
